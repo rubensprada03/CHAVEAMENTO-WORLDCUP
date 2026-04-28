@@ -2,13 +2,15 @@ import { useState } from 'react';
 import GroupsPage from './pages/GroupsPage.jsx';
 import MatchesPage from './pages/MatchesPage.jsx';
 import StandingsPage from './pages/StandingsPage.jsx';
+import GroupStandingsPage from './pages/GroupStandingsPage.jsx';
 import KnockoutPage from './pages/KnockoutPage.jsx';
 
 const TABS = [
-  { id: 'grupos', label: 'Grupos' },
-  { id: 'jogos', label: 'Jogos' },
-  { id: 'classificacao', label: 'Classificação' },
-  { id: 'matamata', label: 'Mata-mata' },
+  { id: 'grupos',        label: 'Grupos' },
+  { id: 'jogos',         label: 'Jogos' },
+  { id: 'porgrupo',      label: 'Classif. por Grupo' },
+  { id: 'classificacao', label: 'Classif. Geral' },
+  { id: 'matamata',      label: 'Mata-mata' },
 ];
 
 export default function App() {
@@ -32,10 +34,11 @@ export default function App() {
         ))}
       </nav>
       <main className="page">
-        {tab === 'grupos' && <GroupsPage />}
-        {tab === 'jogos' && <MatchesPage />}
+        {tab === 'grupos'        && <GroupsPage />}
+        {tab === 'jogos'         && <MatchesPage />}
+        {tab === 'porgrupo'      && <GroupStandingsPage />}
         {tab === 'classificacao' && <StandingsPage />}
-        {tab === 'matamata' && <KnockoutPage />}
+        {tab === 'matamata'      && <KnockoutPage />}
       </main>
     </div>
   );
