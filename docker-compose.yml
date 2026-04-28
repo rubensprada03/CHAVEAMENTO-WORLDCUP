@@ -1,0 +1,53 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: fifa_db
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: fifa_champ
+      POSTGRES_USER: fifa
+      POSTGRES_PASSWORD: fifa123
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U fifa -d fifa_champ"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: fifa_backend
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DATABASE_URL: postgresql://fifa:fifa123@db:5432/fifa_champ
+      PORT: 3001
+      NODE_ENV: development
+      FRONTEND_URL: http://localhost:5173
+    ports:
+      - "3001:3001"
+
+  frontend:
+      build:
+        context: ./frontend
+        dockerfile: Dockerfile
+      container_name: fifa_frontend
+      restart: unless-stopped
+      depends_on:
+        - backend
+      environment:
+        VITE_PROXY_TARGET: http://backend:3001
+      ports:
+        - "5173:5173"
+      volumes:
+        - ./frontend/src:/app/src          # hot reload do src
+        - ./frontend/index.html:/app/index.html
+volumes:
+  postgres_data:
